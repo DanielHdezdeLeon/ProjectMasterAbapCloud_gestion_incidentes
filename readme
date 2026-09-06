@@ -1,0 +1,380 @@
+Proyecto 
+
+ 
+ 
+ 
+REQUERIMIENTOS 
+ 
+ 
+Cliente: Logali Group 
+Aplicación/Cód. Proyecto: AC-GI-II 
+Nombre Proyecto: Gestión de Incidentes  
+         
+  
+ 
+ 
+Control de Versiones 
+ 
+Versión 	Responsable 	Fecha 	Descripción del cambio 
+1.0 	Arquitectura de Desarrollo 
+Logali 	 	Versión inicial del documento. 
+ 	 	 	 
+ 	 	 	 
+ 	 	 	 
+ 	 
+ 
+            
+ 
+Requerimiento Funcional del Proyecto Final: Gestión de Incidentes 
+  
+   
+ 
+   
+Contenido 
+1. Alcance	5 
+2. Descripción Funcional	6 
+3. Requisitos Específicos	6 
+3.1. Estructura de Datos y Diccionario de Datos	6 
+3.2. Operaciones CRUD (Create, Read, Update, Delete)	7 
+4. Diseño Base de datos	7 
+4.1. Tablas de Base de Datos – Modelo RAP	7 
+4.2. Tablas de Base de Datos – Adicionales	7 
+4.3. Definición Campos	8 
+4.4. Relaciones entre Tablas	10 
+4.5. Consideraciones Adicionales	11 
+5. Modelado y Guardado	11 
+5.1. Entidad Raíz de incidentes y composición a entidad de historial	11 
+5.2. Entidades de consumo redireccionadas	12 
+5.3. Metadata Extensions	12 
+5.4. Behavior Definition	14 
+6. Business Services	17 
+6.1. Service Definition	17 
+6.2. Service Binding	17 
+7. Acciones UI	17 
+8. Requerimiento Funcional de Validaciones	18 
+9. Test	19 
+10. Entregables del Proyecto	19 
+
+ 
+   
+    
+1.	Alcance 
+ 
+Objetivo:  
+Desarrollar una aplicación basada en ABAP RESTful Application Programming Model (RAP) para la gestión de incidentes. La aplicación deberá permitir operaciones CRUD, garantizar un rendimiento óptimo y aplicar validaciones de negocio, además de incluir una interfaz de usuario implementada con la misma tecnología. 
+ 
+Alcance del Proyecto: 
+ 
+Backend con ABAP RAP with DRAFT: 
+●	Definir la estructura de datos en CDS Views. 
+●	Implementar un Business Object (BO) con acciones estándar (Create, Read, Update, Delete) con un escenario administrado. 
+●	Implementar validaciones y lógica de negocio en Behavior Definitions e Implementations. 
+●	Optimizar el rendimiento de las consultas mediante técnicas recomendadas en ABAP Cloud. 
+Interfaz de Usuario: 
+●	Desarrollar una aplicación Fiori Elements basada en OData V4 expuesto por el servicio RAP, usando Metadata Extensions. 
+●	Incluir formularios y listas para la gestión de incidentes. 
+●	Implementar mensajes de validación y manejo de errores. 
+Requisitos Técnicos: 
+●	Uso de CDS Views, composiciones y asociaciones. 
+●	Implementación de Business Object en ABAP RAP. 
+●	Exposición del servicio OData V4. 
+●	Desarrollo de UI utilizando Fiori Elements. 
+ 
+2.	Descripción Funcional 
+ 
+El Sistema de Gestión de Incidentes permitirá a los usuarios registrar, actualizar, consultar y cerrar incidentes dentro de una organización. Cada incidente contará con información clave como el tipo de problema, prioridad, estado y descripción detallada. 
+ 
+Flujo principal de la aplicación: 
+ 
+●	Creación de un incidente con datos obligatorios. 
+●	Consulta de incidentes abiertos y cerrados. 
+●	Actualización del estado y detalles del incidente. 
+●	Eliminación de registros según permisos definidos. 
+●	Validaciones y restricciones para garantizar la coherencia de los datos. 
+ 
+Los usuarios podrán acceder a la aplicación mediante una interfaz Fiori Elements, que mostrará listas y formularios optimizados para la gestión eficiente de los incidentes. 
+ 
+3.	Requisitos Específicos 
+ 
+3.1.	Estructura de Datos y Diccionario de Datos 
+ 
+● Crear y configurar objetos en el Diccionario de Datos: 
+ 
+o	Tipos de datos: Elementos de datos y dominios específicos para los campos mencionados en la siguiente sección. 
+o	Tablas de base de datos: 
+▪ Tablas para incidencias e historial de las incidencias.  
+▪ Configuración de claves primarias y secundarias. 
+ 
+3.2.	Operaciones CRUD (Create, Read, Update, Delete) 
+ 
+●	Crear: Programar la creación de las incidencias a través de la aplicación RAP con validaciones como campos obligatorios y formato correcto de datos. 
+●	Leer: Implementar lecturas y consultas con filtros por prioridad de la incidencia, estado y responsable. 
+●	Actualizar: Habilitar la operación en la definición de comportamiento de la aplicación RAP. 
+●	Eliminar: Habilitar la operación en la definición de comportamiento de la aplicación RAP. Validar la eliminación de las incidencias que tienen el estado "Open" (Abierto). 
+ 
+4.	Diseño Base de datos 
+ 
+Nota técnica: Para la nomenclatura de los objetos creados en el sistema se debe reemplazar la palabra “USER” con los últimos 3 caracteres del Usuario SAP del estudiante en todos los artefactos creados, para evitar conflictos en la creación de los artefactos. 
+ 
+4.1.	Tablas de Base de Datos – Modelo RAP 
+ 
+●	Incidencias: ZDT_INCT_USER.  
+●	Historial de Incidencias: ZDT_INCT_H_USER. 
+ 
+4.2.	Tablas de Base de Datos – Adicionales  
+ 
+● Estado: ZDT_STATUS_USER  ● Prioridades: ZDT_PRIORITY_USER. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+4.3.	Definición Campos 
+ 
+ZDT_INCT_USER (Incidents): 
+Stores the basic information about incidents. 
+Field Name 	Data Type 	Length 	Description 
+INC_UUID 	SYSUUID_X16 	RAW 16 	Unique identifier for the Incident. 
+INCIDENT_ID 	NUMC 	8 	Semantic ID for the Incident. 
+TITLE 	CHAR 	20 	Title. 
+DESCRIPTION  	CHAR 	60 	Detailed description of the Incident. 
+STATUS 	CHAR 	2 	Status of the Incident (e.g., 'OP', 'IP'). 
+PRIORITY 	CHAR 	1 	Priority of the Incident (e.g., 'H'). 
+CREATION_DATE 	DATS 	8 	Created Date 
+CHANGED_DATE 	DATS 	8 	Changed Date 
+LOCAL_CREATED_BY 	ABP_CREATION 	 	Created By 
+LOCAL_CREATED_AT 	ABP_CREATION_TS TMPL 	 	Created On 
+LOCAL_LAST_CHANGED_
+BY 	ABP_LOCINST_LAST CHANGE 	 	Created On 
+LOCAL_LAST_CHANGED_
+AT 	ABP_LOCINST_LAST CHANGE_TSTMPL 	 	Changed By 
+LAST_CHANGED_AT 	ABP_LASTCHANGE
+_TSTMPL 	 	Changed On 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ZDT_INCT_H_USER (History): 
+Stores information about the history of the Incidents. 
+ 
+Field Name 	Data Type 	Length 	Description 
+HIS_UUID 	SYSUUID_X16 	RAW 16 	Unique identifier for the History Incident. 
+INC_UUID 	SYSUUID_X16 	10 	Unique 	identifier 	for 	the 
+Incident. 
+HIS_ID 	NUMC 	8 	History ID 
+PREVIOUS_STATUS 	CHAR 	2 	Status of the Incident (e.g., 'OP', 
+'IP'). 
+NEW_STATUS 	CHAR 	2 	Status of the Incident (e.g., 'OP', 
+'IP'). 
+TEXT 	CHAR 	80 	Observation 
+LOCAL_CREATED_BY 	ABP_CREATION 	 	Created By 
+LOCAL_CREATED_AT 	ABP_CREATION_T
+STMPL 	 	Created On 
+LOCAL_LAST_CHANGED_
+BY 	ABP_LOCINST_LA STCHANGE 	 	Created On 
+LOCAL_LAST_CHANGED_
+AT 	ABP_LOCINST_LA
+STCHANGE_TSTM
+PL 	 	Changed By 
+LAST_CHANGED_AT 	ABP_LASTCHANG E_TSTMPL 	 	Changed On 
+ 
+ 
+ZDT_STATUS_USER (Statuses):  
+Stores the possible statuses for Incidents (e.g., Pending, Completed). 
+Field Name 	Data Type 	Length 	Description 
+STATUS_CODE 	CHAR 	2 	Unique identifier for the status. 
+STATUS_DESCRIPTION 	CHAR 	40 	Description of the status (e.g., 'Pending', 'Completed'). 
+ 	 
+  
+ 
+ 
+Valores admitidos para el campo STATUS_CODE: 
+Value 	Description 
+OP 	Open 
+IP 	In Progress 
+PE 	Pending 
+CO 	Completed 
+CL 	Closed 
+CN 	Canceled 
+ 
+ZDT_PRIORITY_USER (Priorities):  
+Stores the possible priorities for Incidents (e.g., High, Low). 
+Field Name 	Data Type 	Length 	Description 
+PRIORITY_CODE 	CHAR 	1 	Unique identifier for the priority. 
+PRIORITY_DESCRIPTION 	CHAR 	40 	Description of the priority (e.g., 'A' for High, 'B' for Low). 
+ 
+Valores admitidos para el campo PRIORITY_CODE: 
+Value 	Description 
+H 	High 
+M 	Medium 
+L 	Low 
+ 
+4.4.	Relaciones entre Tablas 
+ 
+Relación 1: ZDT_INCT_H_USER → ZDT_INCT_USER  ● Tipo: Clave foránea. 
+●	Detalle: Foreign Key Field: INC_UUID en ZDT_INCT_H_USER referencia INC_UUID en ZDT_INCT_USER.  
+ 
+Relación 2: ZDT_INCT_USER → ZDT_STATUS_USER ● Tipo: Clave foránea. 
+●	Detalle: Foreign Key Field: STATUS en ZDT_INCT_USER referencia STATUS_CODE en ZDT_STATUS_USER.  
+Relación 3: ZDT_INCT_USER → ZDT_PRIORITY_USER  
+ 
+●	Tipo: Clave foránea. 
+●	Detalle: Foreign Key Field: PRIORITY en ZDT_INCT_USER referencia PRIORITY_CODE en ZDT_PRIORITY_USER.  
+ 
+4.5.	Consideraciones Adicionales 
+Consistencia y Validación: 
+●	Utilizar dominios para campos como STATUS y PRIORITY, definiendo valores predefinidos. 
+●	Asegurar que los identificadores (UUID) sean únicos mediante claves primarias. 
+ 
+5.	Modelado y Guardado 
+ 
+5.1.	Entidad Raíz de incidentes y composición a entidad de historial 
+La aplicación RAP utiliza una entidad principal para las incidencias, disponiendo de las operaciones CRUD (junto con las validaciones mencionadas anteriormente) y una navegación de tipo composición a la entidad del historial de la incidencia, habilitando solo la lectura desde la interfaz de usuario. Esta navegación se debe realizar entre la entidad raíz de incidentes, mediante una composición con una cardinalidad de cero a muchos ([0..*]), a una entidad de historial relacionada con una asociación a la entidad raíz o padre por medio del campo INC_UUID con su respectivo alias. 
+  
+ 
+Durante el proceso del guardado de la incidencia, se debe definir un guardado adicional que permita capturar en la entidad del historial los cambios realizados sobre la incidencia registrando el estado anterior y nuevo, junto con la fecha y el usuario del cambio. Este proceso insertará los datos en la tabla ZDT_INCT_H_USER. 
+  
+ 
+5.2.	Entidades de consumo redireccionadas 
+ 
+Además, es necesario crear dos entidades de consumo o proyección: una de la entidad raíz de incidentes, utilizando un contrato transaccional, y otra de la entidad de historial, relacionadas entre sí mediante la técnica de redireccionamiento. Cada asociación debe redireccionar, en el caso de la entidad de incidentes, a la composición del hijo que es la del Historial y, en el caso de la entidad de historial, al padre que es la de Incidentes. 
+ 
+5.3.	Metadata Extensions 
+ 
+Es necesario crear dos metadata extensión creadas a partir de las entidades de consumo previamente para en el caso de la entidades de consumo: 
+ 
+Incidentes: 
+ 
+●	Agregar una clasificación ascendente por medio del campo INCIDENT_ID. 
+●	Colocar el título de encabezado Incident. 
+●	Ocultar de las columnas visibles así como de los filtros de búsqueda: 
+○	Las de auditoría como lo son: local_created_by, local_created_at, local_last_changed_by, local_last_changed_at, last_changed_at. 
+○ Las columnas: inc_uuid y title. 
+■ Nota: La columna title solo se debe eliminar de los filtros de búsqueda. 
+○ Las asociaciones referenciadas. 
+  
+●	En necesario agregar el tipo de visualización #IDENTIFICATION_REFERENCE para los registros de incidentes y #LINEITEM_REFERENCE para los registros de las modificaciones realizadas en la vista relacionada de historial por medio de @UI.facet. 
+●	Es necesario, a nivel del campo INC_UUID, establecer una acción con el mismo nombre que se utilizará más adelante en la definición del comportamiento para el botón de cambiar el estado. Esto se realiza a nivel de la anotación @UI.lineItem y @UI.identification, estableciendo la propiedad type igual a #FOR_ACTION y asignando un nombre a la acción mediante la propiedad dataAction. 
+●	Colocar el nivel de importancia o relevancia de la siguiente manera: 
+○	Para los campos UUID una importancia alta (#HIGH). 
+○ Para los campos ID una importancia media (#MEDIUM). ○ Para los campos ID una importancia baja (#LOW). 
+ 
+ 
+ 
+ 
+ 
+ 
+Historial:  
+ 
+●	Agregar una clasificación ascendente por medio del campo his_id. 
+●	Colocar  el título de encabezado History. 
+●	Es importante deshabilitar la operación de creación para la vista de historial debido a que las operaciones realizadas a esta vista se realizan al cambiar los estatus de vista de incidentes. Esto se realiza por medio de la anotación @UI.createHidden: true, en el encabezado. 
+●	Ocultar de las columnas visibles así como de los filtros de búsqueda: 
+○ Las columnas de auditoría como lo son: local_created_by, local_created_at, local_last_changed_by, local_last_changed_at y last_changed_at. 
+○ Las columnas: his_uuid e inc_uuid. 
+○ Las asociaciones referenciadas. 
+●	En necesario agregar el tipo de visualización #LINEITEM_REFERENCE para los registros de las modificaciones realizadas en la vista relacionada de historial por medio de @UI.facet. 
+●	Colocar el nivel de importancia o relevancia de la siguiente manera: 
+○ Para los campos UUID una importancia alta (#HIGH). 
+○ Para los campos ID una importancia media (#MEDIUM). 
+○ Para los campos ID una importancia baja (#LOW). 
+ 
+5.4.	Behavior Definition 
+ 
+Es necesario crear dos Behavior Definitions. En la primera, se definen los comportamientos realizados en la entidad raíz de incidentes y la entidad de historial, con la asociación por composición a la entidad raíz. La segunda, especifica la implementación. 
+ 
+Definición de los comportamientos de las entidades: 
+Incidentes: 
+●	Definición de las botones de las operaciones básicas como: Crear, actualizar y eliminar. 
+●	Definición de Asociación con la entidad hija o de composición de historial habilitando las características create ( features : instance ) y with draft. 
+●	Establecer campos de solo lectura: inc_uuid, incident_id, status, change_date y los campos de auditoría local_created_by, local_created_at, local_last_changed_by, local_last_changed_at y last_changed_at. 
+●	Establecer campo autoincremental inc_uuid. 
+●	Establecer los campos obligatorios title, description y priority. 
+●	Definir la acción del botón con el mismo nombre utilizado en el Metadata Extensions de la entidad de historial, habilitando las características features: instance y authorization: update. Además, agregar una entidad abstracta que defina dos campos: uno para el nuevo estatus, utilizado tanto en las vistas de incidentes como en el historial, y otro campo para la observación, que se utilizará solamente en la vista de historial. 
+●	Establecer un side effects para actualizar el cambio de estatus en la vista de historial al realizar la acción del cambio de estatus. 
+●	Añadir una determinación en el evento on save para que, al momento de crear un nuevo incidente, se cree un registro nuevo en la vista de historial. Este registro debe colocar el estatus inicial open (OP) en la columna new_status y las palabras “First Incident” en la columna text. 
+  
+ 
+●	Añadir una determinación en el evento on modify para que al abrir la vista de creación de registros, los campos incident_id, creation_date y status aparezcan llenos automáticamente. El campo incident_id debe llenarse de manera incremental y, tanto este campo como creation_date, deben ser de solo lectura. 
+●	Establecer las acciones Draft: Activate, Discard, Edit, Resume y Prepare. 
+●	Además de realizar el mapeo de todos los campos de la base de datos ZDT_INCT_USER. 
+Historial: 
+ 
+●	Definición de las botones de las operaciones básicas como:  actualizar y eliminar. 
+●	Definición de Asociación con la entidad padre de Incidentes habilitando las características with draft. 
+●	Establecer campo autoincremental his_uuid. 
+●	Establecer campos de solo lectura: his_uuid, inc_uuid y los campos de auditoría local_created_by, local_created_at, local_last_changed_by, local_last_changed_at y last_changed_at. 
+●	Además de realizar el mapeo de todos los campos de la base de datos ZDT_INCT_H_USER. 
+Implementación de los comportamientos de las entidades: 
+ 
+Incidentes: 
+●	Habilitación de los botones de las operaciones básicas como: Crear, actualizar y eliminar. 
+●	Habilitación de las acciones Draft: Activate, Discard, Edit, Resume y Prepare. 
+●	Habilitación de Asociación con la entidad hija o de composición de historial. 
+Historial: 
+●	Habilitación de Asociación con la entidad padre de Incidentes. 
+6.	Business Services 
+ 
+6.1.	Service Definition 
+Es necesario exponer las entidades de consumo ZC_DT_INCT_USER y ZC_DT_INCT_H_USER, para que se pueda visualizar la relación de ambas vistas en la aplicación Fiori del navegador. 
+6.2.	Service Binding 
+Al momento de generar el Service Binding por medio del Service Definition creado anteriormente es necesario establecer en el campo Binding Type la opción Odata V4 - UI para poder tener la herramienta de Preview, para realizar una prueba de la aplicación en el navegador. 
+ 
+7.	Acciones UI 
+Se debe permitir un cambio de estado explícito desde RAP a través de un botón que realiza una acción que solicita el valor del nuevo estado y un texto de observación a través de un pop-up.  
+  
+Es importante mencionar que la acción realizada para cambiar el estado debe de estar deshabilitada al momento de crear nuevos registros. 
+  
+ 
+8.	Requerimiento Funcional de Validaciones  
+ 
+Campos obligatorios: 
+●	Validar que los campos TITLE, DESCRIPTION, PRIORITY, STATUS y CREATION_DATE no estén vacíos al crear un incidente. 
+●	Si se actualiza un incidente, validar que no se eliminen valores obligatorios. 
+ 
+Restricción de estados: 
+●	No se puede cambiar un incidente a Completed (CO) o Closed (CL) si aún está en Pending (PE). 
+●	Para un incidente con estatus Canceled (CN), Completed (CO) o Closed (CL), ya no es posible cambiar el estatus. 
+ 
+Validación de fechas: 
+●	CHANGE_DATE no puede ser anterior a CREATION_DATE. 
+●	No se permite que un usuario registre un incidente con fecha futura. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Validación de usuario responsable: 
+●	Si el estado cambia a In Progress (IP), debe asignarse un RESPONSABLE. 
+●	Solo el usuario asignado o un administrador pueden cambiar el estado de un incidente.  
+○ Nota: Para las pruebas, el mismo usuario del desarrollador se considera como administrador. 
+ 
+9.	Test 
+ 
+Desde la interfaz de usuario deben invocar las operaciones CRUD requeridas, asegurando que los procesos se ejecuten correctamente. 
+ 
+ 
+10.	Entregables del Proyecto 
+ 
+Realice las entregas de los siguientes ítems: 
+ 
+●	Código 	fuente 	en 	ABAP 	Cloud 	bien 	estructurado 	y documentado. 
+●	Documentación técnica explicativa (estructura de tablas, lógica implementada). 
+●	Respaldo del proyecto en un repositorio público GitHub utilizando abapGit. 
+	11. 	Repositorio del proyecto 
+ 
+Pueden acceder al repositorio del proyecto a través del siguiente enlace. 
+ 
