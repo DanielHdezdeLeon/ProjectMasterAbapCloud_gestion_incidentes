@@ -1,0 +1,45 @@
+@Metadata.layer: #CORE
+
+@UI.headerInfo: {
+typeName: 'History',
+typeNamePlural: 'History',
+title: {
+value: 'HisId'
+},
+description: {
+value: 'Text'
+}
+}
+
+
+annotate entity ZCDS_C_INCT_H_DHL with
+{
+
+  @UI.facet: [{
+  id: 'General',
+  type: #IDENTIFICATION_REFERENCE,
+  label: 'General Data',
+  position: 10
+  }]
+  
+  
+  @UI.lineItem: [{ position: 10 }]
+  @UI.identification:  [{ position: 10, label: 'Incident ID' }]
+  HisId;
+
+  @UI.lineItem: [{ position: 20 }]
+  @UI.identification:  [{ position: 20, label: 'Title' }]
+  PreviousStatus;
+
+  @UI.lineItem: [{ position: 30 }]
+  @UI.identification:  [{ position: 30, label: 'Status' }]
+  NewStatus;
+
+  @UI.lineItem: [{ position: 40 }]
+  @UI.identification:  [{ position: 40, label: 'Description' }]
+  Text;
+
+  @UI.lineItem: [{ position: 50 }]
+  @UI.identification:  [{ position: 50 }]
+  LocalCreatedAt;
+}

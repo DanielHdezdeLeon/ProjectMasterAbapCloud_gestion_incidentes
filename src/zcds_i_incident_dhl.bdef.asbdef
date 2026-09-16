@@ -1,0 +1,61 @@
+managed implementation in class zbp_cds_i_incident_dhl unique;
+strict ( 2 );
+
+define behavior for ZCDS_I_INCIDENT_DHL //alias <alias_name>
+persistent table zdt_inct_dhl
+lock master
+authorization master ( instance )
+//etag master <field_name>
+{
+  create ( authorization : global );
+  update;
+  delete;
+  field ( readonly, numbering : managed ) IncUuid;
+  association _History { create; }
+  mapping for zdt_inct_dhl
+    {
+      IncUuid            = inc_uuid;
+      IncidentId         = incident_id;
+      Title              = title;
+      Description        = description;
+      Status             = status;
+      Priority           = priority;
+      CreationDate       = creation_date;
+      ChangedDate        = changed_date;
+      LocalCreatedBy     = local_created_by;
+      LocalCreatedAt     = local_created_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LastChangedAt      = last_changed_at;
+    }
+}
+
+define behavior for ZCDS_I_INCT_H_DHL //alias <alias_name>
+persistent table zdt_inct_h_dhl
+lock dependent by _Incident
+authorization dependent by _Incident
+//etag master <field_name>
+{
+  update;
+  delete;
+  field ( readonly, numbering : managed ) HisUuid;
+  field ( readonly : update ) IncUuid;
+  association _Incident;
+
+  mapping for zdt_inct_h_dhl
+    {
+      HisUuid            = his_uuid;
+      IncUuid            = inc_uuid;
+      HisId              = his_id;
+      PreviousStatus     = previous_status;
+      NewStatus          = new_status;
+      Text               = text;
+      LocalCreatedBy     = local_created_by;
+      LocalCreatedAt     = local_created_at;
+      LocalLastChangedBy = local_last_changed_by;
+      LocalLastChangedAt = local_last_changed_at;
+      LastChangedAt      = last_changed_at;
+    }
+
+
+}

@@ -1,0 +1,183 @@
+@Metadata.layer: #CUSTOMER
+
+@UI.headerInfo: {
+  typeName: 'Incident',
+  typeNamePlural: 'Incidents',
+  title: {
+    type: #STANDARD,
+    value: 'Title'
+  },
+  description: {
+    type: #STANDARD,
+    value: 'Description'
+  }
+}
+
+annotate entity ZCDS_C_INCIDENT_DHL with
+{
+  @UI.facet: [
+    {
+      id: 'Details',
+      purpose: #STANDARD,
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'Details',
+      position: 10
+    },
+    {
+      id: 'History',
+      purpose: #STANDARD,
+      type: #LINEITEM_REFERENCE,
+      label: 'History',
+      position: 20,
+      targetElement: '_History'
+    }
+  ]
+
+  @Consumption.semanticObject: 'Incident'
+  @UI.identification: [
+    {
+      position: 10,
+      label: 'Incident ID'
+    },
+    {
+  position: 10,
+  type: #FOR_ACTION,
+  dataAction: 'Change_Status',
+  label: 'Change Status'
+  }
+  ]
+  @UI.lineItem: [
+    {
+      position: 10,
+      label: 'Incident ID'
+    }
+  ]
+  @UI.selectionField: [
+    {
+      position: 10
+    }
+  ]
+  IncidentId;
+
+  @UI.identification: [
+    {
+      position: 20,
+      label: 'Title'
+    }
+  ]
+  @UI.lineItem: [
+    {
+      position: 20,
+      label: 'Title'
+    }
+  ]
+  @UI.selectionField: [
+    {
+      position: 20
+    }
+  ]
+  Title;
+
+  @UI.identification: [
+    {
+      position: 30,
+      label: 'Description'
+    }
+  ]
+  Description;
+
+  @UI.identification: [
+    {
+      position: 40,
+      label: 'Status'
+    }
+  ]
+  @UI.lineItem: [
+    {
+      position: 30,
+      label: 'Status'
+    }
+  ]
+  @UI.selectionField: [
+    {
+      position: 30
+    }
+  ]
+  @Consumption.valueHelpDefinition: [{
+  entity: {
+  name: 'ZCDS_I_STATUS_DHL',
+  element: 'StatusCode'
+  }} ]
+  Status;
+
+  @UI.identification: [
+    {
+      position: 50,
+      label: 'Priority'
+    }
+  ]
+  @UI.lineItem: [
+    {
+      position: 40,
+      label: 'Priority'
+    }
+  ]
+  @UI.selectionField: [
+    {
+      position: 40
+    }
+  ]
+  @Consumption.valueHelpDefinition: [{
+    entity: {
+    name: 'ZCDS_I_PRIORITY_DHL',
+    element: 'PriorityCode'
+    }} ]
+  Priority;
+
+  @UI.identification: [
+    {
+      position: 60,
+      label: 'Created On'
+    }
+  ]
+  @UI.lineItem: [
+    {
+      position: 50,
+      label: 'Created On'
+    }
+  ]
+  @UI.selectionField: [
+    {
+      position: 50
+    }
+  ]
+  CreationDate;
+
+  @UI.identification: [
+    {
+      position: 70,
+      label: 'Changed On'
+    }
+  ]
+  ChangedDate;
+
+  @UI.lineItem: [
+    {
+      position: 60,
+      label: 'Created By'
+    }
+  ]
+  LocalCreatedBy;
+
+  @UI.hidden: true
+  LocalCreatedAt;
+
+  @UI.hidden: true
+  LocalLastChangedBy;
+
+  @UI.hidden: true
+  LocalLastChangedAt;
+
+  @UI.hidden: true
+  LastChangedAt;
+}
