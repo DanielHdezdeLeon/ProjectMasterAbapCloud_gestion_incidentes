@@ -33,18 +33,32 @@ annotate entity ZCDS_C_INCIDENT_DHL with
     }
   ]
 
-  @Consumption.semanticObject: 'Incident'
+
   @UI.identification: [
-    {
-      position: 10,
-      label: 'Incident ID'
-    },
     {
   position: 10,
   type: #FOR_ACTION,
   dataAction: 'Change_Status',
   label: 'Change Status'
   }
+  ]
+  @UI.lineItem: [
+   {
+     position: 10,
+     type: #FOR_ACTION,
+     dataAction: 'Change_Status',
+     label: 'Change Status'
+  }]
+  @UI.hidden: true
+
+  IncUuid;
+
+  @Consumption.semanticObject: 'Incident'
+  @UI.identification: [
+    {
+      position: 10,
+      label: 'Incident ID'
+    }
   ]
   @UI.lineItem: [
     {
@@ -107,7 +121,8 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   entity: {
   name: 'ZCDS_I_STATUS_DHL',
   element: 'StatusCode'
-  }} ]
+  },
+  useForValidation : true } ]
   Status;
 
   @UI.identification: [
@@ -131,7 +146,8 @@ annotate entity ZCDS_C_INCIDENT_DHL with
     entity: {
     name: 'ZCDS_I_PRIORITY_DHL',
     element: 'PriorityCode'
-    }} ]
+    },
+  useForValidation : true } ]
   Priority;
 
   @UI.identification: [

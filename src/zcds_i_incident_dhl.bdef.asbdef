@@ -1,17 +1,63 @@
 managed implementation in class zbp_cds_i_incident_dhl unique;
 strict ( 2 );
-
-define behavior for ZCDS_I_INCIDENT_DHL //alias <alias_name>
+with draft;
+define behavior for ZCDS_I_INCIDENT_DHL alias Incident
 persistent table zdt_inct_dhl
-lock master
-authorization master ( instance )
+draft table zdt_d_inct_dhl
+etag master LocalLastChangedAt
+lock master total etag LastChangedAt
+authorization master ( global, instance )
+
+
 //etag master <field_name>
 {
-  create ( authorization : global );
+  create;
   update;
   delete;
-  field ( readonly, numbering : managed ) IncUuid;
-  association _History { create; }
+  field (  numbering : managed ) IncUuid;
+  field ( readonly )
+   IncUUID,
+   IncidentID,
+   Status,
+   CreationDate,
+   ChangedDate,
+   LocalCreatedBy,
+   LocalCreatedAt,
+   LocalLastChangedBy,
+   LastChangedAt,
+   LocalLastChangedAt;
+  field (mandatory)
+   title,
+   Description,
+   Priority;
+
+
+//Boton action
+action ( features : instance, authorization : update ) Change_Status parameter ZABS_CHANGE_STATUS_DHL result [1] $self;
+//internal action saveHistory;
+//side effects
+//{
+//  action Change_Status
+//    affects field Status,
+//            field ChangedDate,
+//            entity _History;
+//}
+//Lo que sucede al finalizar la accion Change_Status es que se actualiza el campo Status, ChangedDate y se crea un registro en la entidad _History
+side effects {
+  action Change_Status affects
+    $self,
+    entity _History;
+}
+// determinaciones que se llaman al crear o actualizar un registro
+determination createInitialValue on save { create; }
+determination Initialvalue on modify { create; }
+determination SetCreationDate on modify { update; }
+draft action Activate optimized;
+draft action Discard;
+draft action Edit;
+draft action Resume;
+draft determine action Prepare;
+//
   mapping for zdt_inct_dhl
     {
       IncUuid            = inc_uuid;
@@ -28,19 +74,38 @@ authorization master ( instance )
       LocalLastChangedAt = local_last_changed_at;
       LastChangedAt      = last_changed_at;
     }
-}
+//
+  association _History { create ( features : instance );
+                         with draft; }
 
-define behavior for ZCDS_I_INCT_H_DHL //alias <alias_name>
+  }
+
+
+define behavior for ZCDS_I_INCT_H_DHL alias History
 persistent table zdt_inct_h_dhl
+draft table zdt_inct_h_d_dhl
+etag master LocalLastChangedAt
 lock dependent by _Incident
 authorization dependent by _Incident
 //etag master <field_name>
 {
-  update;
-  delete;
-  field ( readonly, numbering : managed ) HisUuid;
-  field ( readonly : update ) IncUuid;
-  association _Incident;
+  update ( features : instance );
+  delete ( features : instance );
+
+  field ( readonly )
+  HisUuid,
+  IncUuid,
+  LocalCreatedBy,
+  LocalCreatedAt,
+  LocalLastChangedBy,
+  LastChangedAt,
+  LocalLastChangedAt;
+//
+  field (  numbering : managed ) HisUuid;
+  association _Incident { with draft; }
+//
+
+
 
   mapping for zdt_inct_h_dhl
     {
