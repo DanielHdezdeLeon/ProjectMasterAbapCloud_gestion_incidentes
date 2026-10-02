@@ -1,0 +1,12 @@
+@Metadata.layer: #CORE
+// Complementary annotations to ZME_C_INCIDENT_DHL: adds line items that
+// were only available in the identification facet (Description, ChangedDate).
+annotate entity ZCDS_C_INCIDENT_DHL
+  with
+{
+  @UI.lineItem: [ { position: 35, label: 'Description' } ]
+  Description;
+
+  @UI.lineItem: [ { position: 65, label: 'Changed On' } ]
+  ChangedDate;
+}

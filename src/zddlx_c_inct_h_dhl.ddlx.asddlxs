@@ -1,0 +1,12 @@
+@Metadata.layer: #CORE
+// Complementary annotations to ZME_C_INCT_H_DHL: adds a line item for the
+// comment text (only commented out there) and exposes who logged the change.
+annotate entity ZCDS_C_INCT_H_DHL
+  with
+{
+  @UI.lineItem: [ { position: 45, label: 'Comment' } ]
+  Text;
+
+  @UI.lineItem: [ { position: 55, label: 'Changed By' } ]
+  LocalCreatedBy;
+}

@@ -69,6 +69,9 @@ CLASS zcl_load_data_project_dhl IMPLEMENTATION.
     ENDMETHOD.
 
     METHOD delete_tables.
+      " Only reset the demo master data for the local (test/demo) client.
+      " Never run this class against a system where zdt_status_dhl /
+      " zdt_priority_dhl already contain productive data.
       DELETE FROM zdt_status_dhl.
       DELETE FROM zdt_priority_dhl.
 
@@ -140,8 +143,8 @@ METHOD load_demo_data.
           description           = |Descripción incidente { lv_index }|
           status                = 'OP'
           priority              = 'H'
-          creation_date         = sy-datum
-          changed_date          = sy-datum
+          creation_date         = cl_abap_context_info=>get_system_date( )
+          changed_date          = cl_abap_context_info=>get_system_date( )
           local_created_by      = sy-uname
           local_created_at      = lv_timestamp
           local_last_changed_by = sy-uname
@@ -159,7 +162,7 @@ METHOD load_demo_data.
           his_uuid              = lv_his_uuid
           inc_uuid              = lv_inc_uuid
           his_id                = lv_index
-          previous_status       = 'NW'
+          previous_status       = ''
           new_status            = 'OP'
           text                  = |Creación del incidente { lv_index }|
           local_created_by      = sy-uname

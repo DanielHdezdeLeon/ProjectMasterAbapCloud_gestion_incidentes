@@ -2,4 +2,6 @@
 define service ZSD_project_incident {
   expose ZCDS_C_INCIDENT_DHL;
   expose ZCDS_C_INCT_H_DHL;
+  expose ZCDS_I_STATUS_DHL   as ValueHelpStatus;
+  expose ZCDS_I_PRIORITY_DHL as ValueHelpPriority;
 }
