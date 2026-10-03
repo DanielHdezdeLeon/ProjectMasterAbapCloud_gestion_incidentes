@@ -1,20 +1,25 @@
+// DHL: Behavior managed: la clase zbp_cds_i_incident_dhl contiene la lógica; strict(2) aplica reglas estrictas de RAP; with draft habilita borradores.
 managed implementation in class zbp_cds_i_incident_dhl unique;
 strict ( 2 );
 with draft;
+// DHL: Entidad raíz Incident: tabla persistente, tabla de borrador y control de concurrencia (etag/lock).
 define behavior for ZCDS_I_INCIDENT_DHL alias Incident
 persistent table zdt_inct_dhl
 draft table zdt_d_inct_dhl
 etag master LocalLastChangedAt
 lock master total etag LastChangedAt
+// DHL: Autorización global (crear) e instancia (actualizar/borrar), implementada en la clase.
 authorization master ( global, instance )
 
 
-//etag master <field_name>
 {
+  // DHL: Operaciones estándar permitidas sobre el incidente.
   create;
   update;
   delete;
+  // DHL: El UUID se genera automáticamente por el framework.
   field (  numbering : managed ) IncUuid;
+  // DHL: Campos de solo lectura: los calcula el sistema o la lógica (estado, fechas, auditoría).
   field ( readonly )
    IncUUID,
    IncidentID,
@@ -26,38 +31,40 @@ authorization master ( global, instance )
    LocalLastChangedBy,
    LastChangedAt,
    LocalLastChangedAt;
+  // DHL: Campos obligatorios que debe informar el usuario.
   field (mandatory)
    title,
    Description,
    Priority;
 
 
-//Boton action
+// DHL: Acción (botón) para cambiar el estado; se habilita por instancia y requiere permiso de actualización.
+// Recibe el nuevo estado y el texto (ZABS_CHANGE_STATUS_DHL) y devuelve la instancia modificada.
 action ( features : instance, authorization : update ) Change_Status parameter ZABS_CHANGE_STATUS_DHL result [1] $self;
-//internal action saveHistory;
-//side effects
-//{
-//  action Change_Status
-//    affects field Status,
-//            field ChangedDate,
-//            entity _History;
-//}
-//Lo que sucede al finalizar la accion Change_Status es que se actualiza el campo Status, ChangedDate y se crea un registro en la entidad _History
+// DHL: Side effects: tras Change_Status se actualiza el estado y la fecha de cambio y se crea
+// un registro en el historico, por lo que la UI refresca la instancia y la entidad _History.
+// Se especifican los campos que cambian (Status, ChangedDate) para que la UI los refresque.
 side effects {
   action Change_Status affects
     $self,
     entity _History;
 }
-// determinaciones que se llaman al crear o actualizar un registro
+// DHL: Determinaciones: createInitialValue crea el primer histórico al guardar;
+// Initialvalue asigna ID, fechas y estado inicial al crear; SetCreationDate actualiza la fecha de cambio al modificar.
 determination createInitialValue on save { create; }
 determination Initialvalue on modify { create; }
 determination SetCreationDate on modify { update; }
+// DHL: Acciones de borrador: activar, descartar, editar, reanudar y preparar (validar antes de activar).
 draft action Activate optimized;
 draft action Discard;
 draft action Edit;
 draft action Resume;
 draft determine action Prepare;
-//
+
+  // DHL: Validacion al guardar: verifica que los campos obligatorios (title, Description, Priority) no esten vacios.
+  validation validate_mandatory_fields on save { create; update; }
+
+  // DHL: Mapeo entre campos de la entidad CDS y columnas de la tabla persistente.
   mapping for zdt_inct_dhl
     {
       IncUuid            = inc_uuid;
@@ -74,24 +81,27 @@ draft determine action Prepare;
       LocalLastChangedAt = local_last_changed_at;
       LastChangedAt      = last_changed_at;
     }
-//
+  // DHL: Asociación al histórico: se permite crear entradas por instancia y soporta borrador.
   association _History { create ( features : instance );
                          with draft; }
 
   }
 
 
+// DHL: Entidad hija History: guarda el histórico de cambios de estado de cada incidente.
 define behavior for ZCDS_I_INCT_H_DHL alias History
 persistent table zdt_inct_h_dhl
 draft table zdt_inct_h_d_dhl
 etag master LocalLastChangedAt
+// DHL: El bloqueo y la autorización se delegan en la entidad raíz Incident.
 lock dependent by _Incident
 authorization dependent by _Incident
-//etag master <field_name>
 {
+  // DHL: Actualizar y borrar dependen de las features de instancia.
   update ( features : instance );
   delete ( features : instance );
 
+  // DHL: Campos de solo lectura (claves y auditoría).
   field ( readonly )
   HisUuid,
   IncUuid,
@@ -100,13 +110,11 @@ authorization dependent by _Incident
   LocalLastChangedBy,
   LastChangedAt,
   LocalLastChangedAt;
-//
+  // DHL: El UUID del histórico se genera automáticamente; la asociación _Incident apunta a la raíz.
   field (  numbering : managed ) HisUuid;
   association _Incident { with draft; }
-//
 
-
-
+  // DHL: Mapeo entre campos de la entidad CDS y columnas de la tabla de histórico.
   mapping for zdt_inct_h_dhl
     {
       HisUuid            = his_uuid;

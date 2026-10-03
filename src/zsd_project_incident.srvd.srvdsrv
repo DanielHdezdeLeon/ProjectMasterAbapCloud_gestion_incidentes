@@ -1,7 +1,7 @@
-@EndUserText.label: 'Service definition'
-define service ZSD_project_incident {
-  expose ZCDS_C_INCIDENT_DHL;
-  expose ZCDS_C_INCT_H_DHL;
-  expose ZCDS_I_STATUS_DHL   as ValueHelpStatus;
-  expose ZCDS_I_PRIORITY_DHL as ValueHelpPriority;
+@EndUserText.label: 'Service definition for Project Incident Management'
+define service ZSD_PROJECT_INCIDENT {
+  expose ZCDS_C_INCIDENT_DHL as ProjectIncident;
+  expose ZCDS_C_INCT_H_DHL as IncidentHistory;
+  expose ZCDS_I_PRIORITY_DHL as Priority;
+  expose ZCDS_I_STATUS_DHL as Status;
 }

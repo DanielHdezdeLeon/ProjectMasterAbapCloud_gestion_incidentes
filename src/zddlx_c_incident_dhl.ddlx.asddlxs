@@ -1,12 +1,15 @@
+// DHL: Metadata Extension complementaria de ZME_C_INCIDENT_DHL (capa CORE).
 @Metadata.layer: #CORE
-// Complementary annotations to ZME_C_INCIDENT_DHL: adds line items that
-// were only available in the identification facet (Description, ChangedDate).
+// DHL: Anotaciones complementarias: añade a la lista columnas que en la otra extensión
+// solo aparecían en el detalle (Description y ChangedDate).
 annotate entity ZCDS_C_INCIDENT_DHL
   with
 {
+  // DHL: Muestra la descripción como columna 'Description' en la lista (posición 35).
   @UI.lineItem: [ { position: 35, label: 'Description' } ]
   Description;
 
+  // DHL: Muestra la fecha de última modificación como columna 'Changed On' en la lista (posición 65).
   @UI.lineItem: [ { position: 65, label: 'Changed On' } ]
   ChangedDate;
 }

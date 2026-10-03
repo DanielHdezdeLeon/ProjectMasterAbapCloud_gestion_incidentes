@@ -1,5 +1,8 @@
+// DHL: Metadata Extension con las anotaciones de UI (Fiori Elements) para la entidad de consumo de incidentes.
+// DHL: Capa CUSTOMER: permite sobrescribir metadatos de capas inferiores.
 @Metadata.layer: #CUSTOMER
 
+// DHL: Cabecera del objeto: nombre singular/plural, título (Title) y descripción (Description).
 @UI.headerInfo: {
   typeName: 'Incident',
   typeNamePlural: 'Incidents',
@@ -15,6 +18,8 @@
 
 annotate entity ZCDS_C_INCIDENT_DHL with
 {
+  // DHL: Facetas (secciones) de la página de objeto: 'Details' con los datos del incidente
+  // y 'History' con la tabla del histórico (asociación _History).
   @UI.facet: [
     {
       id: 'Details',
@@ -34,6 +39,8 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   ]
 
 
+  // DHL: Campo clave técnico (UUID): se oculta, y se usa para colgar el botón 'Change Status'
+  // (acción Change_Status) en la página de detalle y en la lista.
   @UI.identification: [
     {
   position: 10,
@@ -53,7 +60,9 @@ annotate entity ZCDS_C_INCIDENT_DHL with
 
   IncUuid;
 
+  // DHL: ID del incidente: visible en detalle y lista, usado como campo de filtro y como objeto semántico para navegación.
   @Consumption.semanticObject: 'Incident'
+  // DHL: Título del incidente: visible en detalle y lista, y campo de filtro.
   @UI.identification: [
     {
       position: 10,
@@ -73,6 +82,7 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   ]
   IncidentId;
 
+  // DHL: Descripción del incidente: solo se muestra en el detalle.
   @UI.identification: [
     {
       position: 20,
@@ -92,6 +102,8 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   ]
   Title;
 
+  // DHL: Estado: visible en detalle y lista, filtro y ayuda de búsqueda sobre el catálogo ZCDS_I_STATUS_DHL
+  // (el valor se valida contra ella).
   @UI.identification: [
     {
       position: 30,
@@ -100,6 +112,8 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   ]
   Description;
 
+  // DHL: Prioridad: visible en detalle y lista, filtro y ayuda de búsqueda sobre ZCDS_I_PRIORITY_DHL
+  // (el valor se valida contra ella).
   @UI.identification: [
     {
       position: 40,
@@ -108,13 +122,13 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   ]
   @UI.lineItem: [
     {
-      position: 30,
+      position: 40,
       label: 'Status'
     }
   ]
   @UI.selectionField: [
     {
-      position: 30
+      position: 40
     }
   ]
   @Consumption.valueHelpDefinition: [{
@@ -125,6 +139,7 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   useForValidation : true } ]
   Status;
 
+  // DHL: Fecha de creación: visible en detalle y lista, y campo de filtro.
   @UI.identification: [
     {
       position: 50,
@@ -133,13 +148,13 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   ]
   @UI.lineItem: [
     {
-      position: 40,
+      position: 50,
       label: 'Priority'
     }
   ]
   @UI.selectionField: [
     {
-      position: 40
+      position: 50
     }
   ]
   @Consumption.valueHelpDefinition: [{
@@ -150,21 +165,23 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   useForValidation : true } ]
   Priority;
 
+  // DHL: Fecha de última modificación: solo se muestra en el detalle.
   @UI.identification: [
     {
       position: 60,
-      label: 'Created On'
+      label: 'Creation Date'
     }
   ]
+  // DHL: Usuario creador: se muestra en la lista.
   @UI.lineItem: [
     {
-      position: 50,
-      label: 'Created On'
+      position: 60,
+      label: 'Creation Date'
     }
   ]
   @UI.selectionField: [
     {
-      position: 50
+      position: 60
     }
   ]
   CreationDate;
@@ -185,6 +202,7 @@ annotate entity ZCDS_C_INCIDENT_DHL with
   ]
   LocalCreatedBy;
 
+  // DHL: Campos técnicos de auditoría: se ocultan en la interfaz.
   @UI.hidden: true
   LocalCreatedAt;
 

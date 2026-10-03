@@ -35,6 +35,9 @@ CLASS lhc_ZCDS_I_INCIDENT_DHL DEFINITION INHERITING FROM cl_abap_behavior_handle
     METHODS SetCreationDate FOR DETERMINE ON MODIFY
        keys FOR Incident~SetCreationDate.
 
+    " DHL: Validación de campos obligatorios: title, Description, Priority no pueden estar vacíos.
+    METHODS validate_mandatory_fields FOR VALIDATE ON SAVE
+       keys FOR Incident~validate_mandatory_fields.
 
     METHODS validate_status_change  IMPORTING
                                       iv_status       TYPE zde_status_dhl
@@ -198,14 +201,16 @@ CLASS lhc_ZCDS_I_INCIDENT_DHL IMPLEMENTATION.
     ENDIF.
 
     " DHL: 4. Se actualiza el estado con el valor del parámetro NewStatus de la entidad abstracta.
+    " Se actualiza tambien ChangedDate para que siempre refleje el último cambio.
     MODIFY ENTITIES OF zcds_i_incident_dhl
     IN LOCAL MODE
     ENTITY Incident
-    UPDATE FIELDS ( status )
+    UPDATE FIELDS ( status ChangedDate )
     WITH VALUE #(
       FOR ls_key1 IN lt_transition_keys (
-        %tky   = ls_key1-%tky
-        status = ls_key1-%param-NewStatus
+        %tky        = ls_key1-%tky
+        status      = ls_key1-%param-NewStatus
+        ChangedDate = cl_abap_context_info=>get_system_date( )
       )
     )
     FAILED DATA(lt_update_failed)
@@ -465,6 +470,55 @@ CLASS lhc_ZCDS_I_INCIDENT_DHL IMPLEMENTATION.
       )
       FAILED DATA(lt_failed)
       REPORTED DATA(lt_reported).
+  ENDMETHOD.
+
+  " DHL: Validación al guardar: verifica que los campos obligatorios no estén vacíos.
+  METHOD validate_mandatory_fields.
+    " DHL: Se leen los datos del incidente para validar campos obligatorios.
+    READ ENTITIES OF zcds_i_incident_dhl
+      IN LOCAL MODE
+      ENTITY Incident
+      FIELDS ( Title Description Priority )
+      WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_incidents)
+      FAILED DATA(lt_read_failed)
+      REPORTED DATA(lt_read_reported).
+
+    " DHL: Se recorre cada incidente y se valida que los campos obligatorios tengan valor.
+    LOOP AT lt_incidents INTO DATA(ls_incident).
+      IF ls_incident-Title IS INITIAL.
+        APPEND VALUE #( %tky = ls_incident-%tky ) TO failed-incident.
+        APPEND VALUE #(
+          %tky  = ls_incident-%tky
+          %msg  = new_message_with_text(
+                    severity = if_abap_behv_message=>severity-error
+                    text     = 'El título (Title) es obligatorio'
+                  )
+        ) TO reported-incident.
+      ENDIF.
+
+      IF ls_incident-Description IS INITIAL.
+        APPEND VALUE #( %tky = ls_incident-%tky ) TO failed-incident.
+        APPEND VALUE #(
+          %tky  = ls_incident-%tky
+          %msg  = new_message_with_text(
+                    severity = if_abap_behv_message=>severity-error
+                    text     = 'La descripción (Description) es obligatoria'
+                  )
+        ) TO reported-incident.
+      ENDIF.
+
+      IF ls_incident-Priority IS INITIAL.
+        APPEND VALUE #( %tky = ls_incident-%tky ) TO failed-incident.
+        APPEND VALUE #(
+          %tky  = ls_incident-%tky
+          %msg  = new_message_with_text(
+                    severity = if_abap_behv_message=>severity-error
+                    text     = 'La prioridad (Priority) es obligatoria'
+                  )
+        ) TO reported-incident.
+      ENDIF.
+    ENDLOOP.
   ENDMETHOD.
 
 ENDCLASS.

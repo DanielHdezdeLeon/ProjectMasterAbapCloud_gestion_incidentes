@@ -1,6 +1,7 @@
 projection;
 strict ( 2 );
 use draft;
+use side effects;
 
 define behavior for ZCDS_C_INCIDENT_DHL //alias <alias_name>
 {

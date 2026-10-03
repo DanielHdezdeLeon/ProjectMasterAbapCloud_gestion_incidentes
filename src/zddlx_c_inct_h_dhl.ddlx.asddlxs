@@ -1,12 +1,15 @@
+// DHL: Metadata Extension complementaria de ZME_C_INCT_H_DHL (capa CORE).
 @Metadata.layer: #CORE
-// Complementary annotations to ZME_C_INCT_H_DHL: adds a line item for the
-// comment text (only commented out there) and exposes who logged the change.
+// DHL: Anotaciones complementarias: añade a la lista el texto del comentario
+// (en la otra extensión solo aparece en el detalle) y muestra quién registró el cambio.
 annotate entity ZCDS_C_INCT_H_DHL
   with
 {
+  // DHL: Muestra el texto del cambio como columna 'Comment' en la lista (posición 45).
   @UI.lineItem: [ { position: 45, label: 'Comment' } ]
   Text;
 
+  // DHL: Muestra el usuario que registró el cambio como columna 'Changed By' en la lista (posición 55).
   @UI.lineItem: [ { position: 55, label: 'Changed By' } ]
   LocalCreatedBy;
 }

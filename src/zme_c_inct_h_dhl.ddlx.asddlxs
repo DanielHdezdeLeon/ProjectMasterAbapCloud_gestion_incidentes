@@ -1,5 +1,8 @@
+// DHL: Metadata Extension con las anotaciones de UI (Fiori Elements) para el histórico de incidentes.
+// DHL: Capa CORE: es la capa base de metadatos.
 @Metadata.layer: #CORE
 
+// DHL: Cabecera del objeto: nombre singular/plural, título (ID del histórico) y descripción (texto del cambio).
 @UI.headerInfo: {
 typeName: 'History',
 typeNamePlural: 'History',
@@ -15,6 +18,7 @@ value: 'Text'
 annotate entity ZCDS_C_INCT_H_DHL with
 {
 
+  // DHL: Faceta (sección) 'General Data' que muestra los campos de identificación.
   @UI.facet: [{
   id: 'General',
   type: #IDENTIFICATION_REFERENCE,
@@ -23,22 +27,26 @@ annotate entity ZCDS_C_INCT_H_DHL with
   }]
   
   
+  // DHL: Identificador del histórico: se muestra en la lista y en la sección de datos generales.
   @UI.lineItem: [{ position: 10, label: 'Incident ID' }]
   @UI.identification:  [{ position: 10, label: 'Incident ID' }]
   HisId;
 
+  // DHL: Estado anterior al cambio (posición 20).
   @UI.lineItem: [{ position: 20, label: 'Status Previo' }]
   @UI.identification:  [{ position: 20, label: 'Status Previo' }]
   PreviousStatus;
 
+  // DHL: Nuevo estado tras el cambio (posición 30).
   @UI.lineItem: [{ position: 30, label: 'New status' }]
   @UI.identification:  [{ position: 30,  label: 'New status' }]
   NewStatus;
 
-//  @UI.lineItem: [{ position: 40, label: 'Description' }]
+  // DHL: Texto del cambio: solo se muestra en la sección de datos generales, no en la lista.
   @UI.identification:  [{ position: 40, label: 'Description' }]
   Text;
 
+  // DHL: Fecha y hora de creación del registro de histórico.
   @UI.lineItem: [{ position: 50 }]
   @UI.identification:  [{ position: 50 }]
   LocalCreatedAt;
